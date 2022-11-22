@@ -1,5 +1,6 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+let canvasPosition = canvas.getBoundingClientRect();
 
 // player class
 class Player {
@@ -34,7 +35,7 @@ class Player {
         }
     }
 }
-
+/*
 // invader class
 class Invader {
     constructor()
@@ -47,7 +48,7 @@ class InvaderGrid {
 class Projectile {
     constructor()
 }
-
+*/
 
 // Mouse movement
 
