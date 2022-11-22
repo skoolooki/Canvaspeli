@@ -1,5 +1,5 @@
 body{
-    background-color: #333;
+    background-color: rgb(187, 183, 183);
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -8,6 +8,6 @@ body{
 }
 
 #canvas{
-    background: white;
+    background: rgb(0, 0, 0);
     border-radius: 5px;
 }
