@@ -36,7 +36,7 @@ class Player {
     }
 }
 
-// Invader //
+// Enemy //
 class Enemy {
     constructor({position}){
         this.speed = {
@@ -174,7 +174,7 @@ function animate(){
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     player.update()
     playerMovement()
-    
+
     grids.forEach((grid)=>{
         grid.update()
         grid.enemys.forEach((enemy)=>{
