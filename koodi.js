@@ -111,13 +111,28 @@ class EnemyGrid {
         }
     }
 }
-/*
+class Bullet {
+    constructor({position, speed}){
+        this.position = position
+        this.speed = speed
 
-// projectile class
-class Projectile {
-    constructor()
+        this.radius = 3
+    }
+
+    draw(){
+        ctx.beginPath()
+        ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI*2)
+        ctx.fillStyle = 'red'
+        ctx.fill()
+        ctx.closePath()
+    }
+    update(){
+        this.draw()
+        this.position.x += this.speed.x
+        this.position.y += this.speed.y
+    }
 }
-*/
+
 
 // Mouse movement
 
@@ -135,10 +150,10 @@ const mouse = {
 
 // Keys for moving player
 const keys ={
-    a: {
+    x: {
         pressed: false
     },
-    d: {
+    y: {
         pressed: false
     },
     space: {
@@ -148,16 +163,17 @@ const keys ={
 
 const player = new Player()
 const grids = []
+const bullets = []
 let frames = 0
 let randomInterval = Math.floor(Math.random() * 500 + 500)
 
 
 function playerMovement(){
-    // if a is pressed and player is not at the end of left canvas corner player, move left
-    if (keys.a.pressed && player.position.x >=0){
+    // if x is pressed and player is not at the end of left canvas corner player, move left
+    if (keys.x.pressed && player.position.x >=0){
         player.speed.x = -5
-    // if d is pressed and player is not at the end of right canvas corner player, move right
-    } else if (keys.d.pressed && player.position.x +player.width <= canvas.width){
+    // if y is pressed and player is not at the end of right canvas corner player, move right
+    } else if (keys.y.pressed && player.position.x +player.width <= canvas.width){
         player.speed.x = 5
     }else{
     // if nothing is pressed stay still and if in corner speed = 0
@@ -165,16 +181,12 @@ function playerMovement(){
     }
 
 }
-
-// animate
-
-function animate(){
-    requestAnimationFrame(animate)
-    ctx.fillStyle = 'black'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    player.update()
-    playerMovement()
-
+function shoot(){
+    bullets.forEach((bullet) => {
+        bullet.update()
+    })
+}
+function spawnEnemys(){
     grids.forEach((grid)=>{
         grid.update()
         grid.enemys.forEach((enemy)=>{
@@ -191,36 +203,55 @@ function animate(){
     }
     frames ++
 }
+
+// animate
+
+function animate(){
+    requestAnimationFrame(animate)
+    ctx.fillStyle = 'black'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    player.update()
+    playerMovement()
+    shoot()
+    spawnEnemys()
+}
 animate()
 
-// key switches 
+// key down switches 
 addEventListener('keydown', ({key}) =>{
     console.log(key)
     switch (key) {
-        case 'a':
+        case 'x':
             console.log('left')
-            keys.a.pressed = true
+            keys.x.pressed = true
             break;
-        case 'd':
+        case 'y':
             console.log('right')
-            keys.d.pressed = true
-            break;
-    }
-})
-
-addEventListener('keyup', ({key}) =>{
-    console.log(key)
-    switch (key) {
-        case 'a':
-            console.log('left')
-            keys.a.pressed = false
-            break;
-        case 'd':
-            console.log('right')
-            keys.d.pressed = false
+            keys.y.pressed = true
             break;
         case ' ':
             console.log('space')
+            bullets.push(new Bullet({
+                position: {
+                    x: player.position.x + player.width / 2,
+                    y: player.position.y
+                },
+                speed: {
+                    x: 0,
+                    y: -10
+                }
+                }))
+            console.log(bullets)
             break;
+    }
+})
+addEventListener("keyup",({key})=>{
+    switch(key){
+        case "x": keys.x.pressed = false
+        break
+        case "y": keys.y.pressed = false
+        break
+        case " ": keys.space.pressed = false
+        break
     }
 })
