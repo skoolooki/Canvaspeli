@@ -35,15 +35,84 @@ class Player {
         }
     }
 }
+
+// Invader //
+class Enemy {
+    constructor({position}){
+        this.speed = {
+            x: 0,
+            y: 0
+        }
+         //img setup
+        const image = new Image()
+        image.src = './images/invader.png'
+        //image scale and position on load
+        image.onload = () => {
+            const scale = 0.5
+            this.image = image
+            this.width = image.width * scale
+            this.height = image.height * scale
+            this.position = {
+                x: position.x,
+                y: position.y
+            }
+        }
+    }
+    // Image setpp on Canvas //
+    draw(){
+        ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)
+    }
+    // updates img position
+    update({speed}){
+        if (this.image){
+            this.draw()
+            this.position.x += speed.x
+            this.position.y += speed.y
+        }
+    }
+}
+// create random grid of enemys  // 
+class EnemyGrid {
+    // position, speed and array
+    constructor(){
+        this.position = {
+            x: 0,
+            y: 0
+        }
+        this.speed = {
+            x: 3,
+            y: 0
+        }
+        this.enemys = []
+        // random amount of rows and columns
+        const rows = Math.floor(Math.random() * 3 + 2);
+        const columns = Math.floor(Math.random() * 5 + 5);
+        this.width = columns * 40
+        // create and push new array
+        for (let x = 0; x < columns; x++){
+            for (let y = 0; y < rows; y++){
+                this.enemys.push(new Enemy({
+                    position: {
+                        x: x * 40,
+                        y: y * 40
+                    }
+                }))
+            }
+        }
+    }
+
+    update(){
+        this.position.x += this.speed.x
+        this.position.y += this.speed.y
+        this.speed.y = 0
+        if(this.position.x + this.width >= canvas.width || this.position.x <=0){
+            this.speed.x = -this.speed.x
+            this.speed.y = 30
+        }
+    }
+}
 /*
-// invader class
-class Invader {
-    constructor()
-}
-// grid class
-class InvaderGrid {
-    constructor()
-}
+
 // projectile class
 class Projectile {
     constructor()
@@ -78,6 +147,9 @@ const keys ={
 }
 
 const player = new Player()
+const grids = []
+let frames = 0
+let randomInterval = Math.floor(Math.random() * 500 + 500)
 
 
 function playerMovement(){
@@ -88,7 +160,7 @@ function playerMovement(){
     } else if (keys.d.pressed && player.position.x +player.width <= canvas.width){
         player.speed.x = 5
     }else{
-    // if nothing is pressed stay still
+    // if nothing is pressed stay still and if in corner speed = 0
         player.speed.x = 0
     }
 
@@ -102,6 +174,22 @@ function animate(){
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     player.update()
     playerMovement()
+    
+    grids.forEach((grid)=>{
+        grid.update()
+        grid.enemys.forEach((enemy)=>{
+            enemy.update({speed: grid.speed})
+        })
+        
+    })
+    // spawn new grid at random
+    if (frames % randomInterval === 0){
+        grids.push(new EnemyGrid())
+        randomInterval = Math.floor(Math.random() * 100 + 500)
+        frames = 0
+        console.log(grids)
+    }
+    frames ++
 }
 animate()
 
@@ -119,6 +207,7 @@ addEventListener('keydown', ({key}) =>{
             break;
     }
 })
+
 addEventListener('keyup', ({key}) =>{
     console.log(key)
     switch (key) {
