@@ -11,6 +11,24 @@ body{
     background: rgb(0, 0, 0);
     border-radius: 5px;
 }
-h1 {
-    color: #000;
+#score{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    width: 100px;
+    height: 15px;
+    margin-left: -14em;
+    margin-top: -28em;
+}
+#start{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+    width: 200px;
+    height: 75px;
+    margin-top: -15em;
 }
