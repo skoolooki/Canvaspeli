@@ -16,7 +16,7 @@ class Player {
         }
         this.opacity = 1
         const image = new Image()
-        image.src = "./images/nelio.png"
+        image.src = "./images/ship.png"
         image.onload = ()=>{
             const scale = 1
             this.image = image
@@ -52,7 +52,7 @@ class Enemy {
         }
          //img setup
         const image = new Image()
-        image.src = './images/invader.png'
+        image.src = './images/enemy.png'
         //image scale and position on load
         image.onload = () => {
             const scale = 0.5
