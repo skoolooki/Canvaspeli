@@ -102,7 +102,7 @@ function animate(){
 
     bullets.forEach((bullet) => {
         bullet.update()
-        if (bullet.position.y <= -800){
+        if (bullet.position.y <= -700){
             bullets.shift()
             console.log("deleted")
         }
