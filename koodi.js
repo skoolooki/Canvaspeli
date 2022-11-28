@@ -235,6 +235,21 @@ function shoot(){
         }
     })
 }
+function win(){
+    if(score === 100){
+        grids.forEach((grid, gridIndex)=>{
+            grids.splice(gridIndex, 1)
+            grid.update()
+            setTimeout(()=>{
+                game.over = true
+                console.log('You Win')
+            },0)
+            setTimeout(()=>{
+                game.active = false
+            },100)
+        })
+    }
+}
 
 function spawnEnemys(){
         // spawn enemys
@@ -347,6 +362,7 @@ function animate(){
     shoot()
     spawnEnemys()
     enemyShoots()
+    win()
 
 }
 startGameBtn.addEventListener('click', function(){
