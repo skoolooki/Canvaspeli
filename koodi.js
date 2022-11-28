@@ -1,6 +1,10 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const scoreOnScreen = document.querySelector('#number');
+const startGameBtn = document.querySelector('#start')
 let canvasPosition = canvas.getBoundingClientRect();
+
+
 
 // player class
 class Player {
@@ -9,7 +13,8 @@ class Player {
         this.speed = {
             x: 0,
             y: 0
-        } 
+        }
+        this.opacity = 1
         const image = new Image()
         image.src = "./images/nelio.png"
         image.onload = ()=>{
@@ -25,8 +30,10 @@ class Player {
         }       
     }
     draw(){
+        ctx.save()
+        ctx.globalAlpha = this.opacity
         ctx.drawImage(this.image, this.position.x, this.position.y)
-
+        ctx.restore()
     }
     update(){
         if (this.image){
@@ -69,6 +76,18 @@ class Enemy {
             this.position.x += speed.x
             this.position.y += speed.y
         }
+    }
+    enemyShoot(enemyBullets){
+        enemyBullets.push(new EnemyBullet({
+            position: {
+                x: this.position.x + this.width / 2,
+                y: this.position.y + this.height
+            },
+            speed: {
+                x:0,
+                y: 5
+            }
+        }))
     }
 }
 // create random grid of enemys  // 
@@ -133,6 +152,24 @@ class Bullet {
     }
 }
 
+class EnemyBullet {
+    constructor({position, speed}){
+        this.position = position
+        this.speed = speed
+        this.width = 3
+        this.height = 10
+    }
+    draw(){
+        ctx.fillStyle = 'white'
+        ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
+    }
+    update(){
+        this.draw()
+        this.position.x += this.speed.x
+        this.position.y += this.speed.y
+    }
+}
+
 
 // Mouse movement
 
@@ -164,8 +201,14 @@ const keys ={
 const player = new Player()
 const grids = []
 const bullets = []
+const enemyBullets = []
 let frames = 0
 let randomInterval = Math.floor(Math.random() * 500 + 500)
+let game = {
+    over: false,
+    active: true,
+}
+let score = 0
 
 
 function playerMovement(){
@@ -182,19 +225,82 @@ function playerMovement(){
 
 }
 function shoot(){
-    bullets.forEach((bullet) => {
-        bullet.update()
+    bullets.forEach((bullet, index)=>{
+        if(bullet.position.y + bullet.radius <= 0){
+            setTimeout(()=>{
+                bullets.splice(index, 1)
+            },0)
+        }else{
+            bullet.update()
+        }
     })
 }
+
 function spawnEnemys(){
-    grids.forEach((grid)=>{
-        grid.update()
-        grid.enemys.forEach((enemy)=>{
-            enemy.update({speed: grid.speed})
+        // spawn enemys
+        grids.forEach((grid, gridIndex)=>{
+            grid.update()
+
+
+            if(frames % 100 === 0 && grid.enemys.length >0){
+                grid.enemys[Math.floor(Math.random()* grid.enemys.length)].enemyShoot(enemyBullets)
+            }
+
+            grid.enemys.forEach((enemy, i)=>{
+                enemy.update({speed: grid.speed})
+
+                // collision detection
+                bullets.forEach((bullet, j)=>{
+                    if(
+                    bullet.position.y - bullet.radius <=
+                    enemy.position.y + enemy.height && 
+                    bullet.position.x + bullet.radius >=
+                    enemy.position.x && 
+                    bullet.position.x - bullet.radius <=
+                    enemy.position.x + enemy.width &&
+                    bullet.position.y + bullet.radius >=
+                    enemy.position.y
+                ){
+                    // Garbage controll and score
+                    setTimeout(()=>{
+                    const enemyFound = grid.enemys.find((enemy2) => enemy2 === enemy)
+                    const bulletFound = bullets.find((bullet2) => bullet2 === bullet)
+                    
+                    if(enemyFound && bulletFound){
+                        score += 1
+                        scoreOnScreen.innerHTML = score
+                        grid.enemys.splice(i, 1)
+                        bullets.splice(j, 1)
+                        // set new left and right for enemyGrid
+                        if(grid.enemys.length > 0){
+                            const firstEnemy = grid.enemys[0]
+                            const lastEnemy = grid.enemys[grid.enemys.length - 1]
+
+                            grid.width = lastEnemy.position.x - firstEnemy.position.x + lastEnemy.width
+                            grid.position.x = firstEnemy.position.x
+                        } else {
+                            grids.splice(gridIndex, 1)
+                        }
+                        }
+                    }, 0)
+
+                }
+                // if enemy is to fardown gameover
+                if(enemy.position.y >= player.position.y){
+                    console.log('dead')
+                    setTimeout(()=>{
+                        player.opacity = 0
+                        game.over = true
+                    },0)
+                    setTimeout(()=>{
+                        game.active = false
+                    },100)
+                }
+            })
+            
         })
-        
     })
-    // spawn new grid at random
+        // create and push new enemygrid at random
     if (frames % randomInterval === 0){
         grids.push(new EnemyGrid())
         randomInterval = Math.floor(Math.random() * 100 + 500)
@@ -204,9 +310,35 @@ function spawnEnemys(){
     frames ++
 }
 
+function enemyShoots(){
+    enemyBullets.forEach((enemyBullet, index)=>{
+        if(enemyBullet.position.y + enemyBullet.height >= canvas.height){
+            setTimeout(()=>{
+                enemyBullets.splice(index, 1)
+            }, 0)
+        }else
+        enemyBullet.update()
+        // enemy bullets collision detection
+        if(enemyBullet.position.y + enemyBullet.height >= player.position.y &&
+            enemyBullet.position.x + enemyBullet.width >= player.position.x &&
+            enemyBullet.position.x <= player.position.x + player.width){
+                console.log('GameOver')
+                setTimeout(()=>{
+                    enemyBullets.splice(index, 1)
+                    player.opacity = 0
+                    game.over = true
+                },0)
+                setTimeout(()=>{
+                    game.active = false
+                },100)
+            }
+    })
+}
+
 // animate
 
 function animate(){
+    if(!game.active) return
     requestAnimationFrame(animate)
     ctx.fillStyle = 'black'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -214,11 +346,22 @@ function animate(){
     playerMovement()
     shoot()
     spawnEnemys()
+    enemyShoots()
+
 }
-animate()
+startGameBtn.addEventListener('click', function(){
+    animate()
+    startGameBtn.style.display = 'none'
+    console.log('Game Started')
+})
+
+
+
+
 
 // key down switches 
 addEventListener('keydown', ({key}) =>{
+    if(game.over) return
     console.log(key)
     switch (key) {
         case 'x':
@@ -245,6 +388,7 @@ addEventListener('keydown', ({key}) =>{
             break;
     }
 })
+// key up switches
 addEventListener("keyup",({key})=>{
     switch(key){
         case "x": keys.x.pressed = false

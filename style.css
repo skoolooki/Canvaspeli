@@ -11,3 +11,24 @@ body{
     background: white;
     border-radius: 5px;
 }
+#score{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    width: 100px;
+    height: 15px;
+    margin-left: -12em;
+    margin-top: -28em;
+}
+#start{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+    width: 200px;
+    height: 75px;
+    margin-top: -15em;
+}
