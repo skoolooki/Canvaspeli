@@ -10,7 +10,7 @@ class Player {
         }
 
         const image = new Image()
-        image.src = "./images/nelio.png"
+        image.src = "./images/ship.png"
         image.onload = ()=>{
             const scale = 0.9
             this.image = image
