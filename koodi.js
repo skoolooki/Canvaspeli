@@ -211,6 +211,7 @@ let game = {
 let score = 0
 
 
+
 function playerMovement(){
     // if x is pressed and player is not at the end of left canvas corner player, move left
     if (keys.x.pressed && player.position.x >=0){
@@ -242,7 +243,7 @@ function win(){
             grid.update()
             setTimeout(()=>{
                 game.over = true
-                console.log('You Win')
+                //console.log('You Win')
                 gameOver()
             },0)
             setTimeout(()=>{
@@ -284,6 +285,7 @@ function spawnEnemys(){
                     
                     if(enemyFound && bulletFound){
                         score += 1
+                        console.log(score)
                         scoreOnScreen.innerHTML = score
                         grid.enemys.splice(i, 1)
                         bullets.splice(j, 1)
@@ -303,7 +305,7 @@ function spawnEnemys(){
                 }
                 // if enemy is to fardown gameover
                 if(enemy.position.y >= player.position.y){
-                    console.log('dead')
+                    //console.log('dead')
                     setTimeout(()=>{
                         player.opacity = 0
                         game.over = true
@@ -321,7 +323,7 @@ function spawnEnemys(){
         grids.push(new EnemyGrid())
         randomInterval = Math.floor(Math.random() * 100 + 500)
         frames = 0
-        console.log(grids)
+        //console.log(grids)
     }
     frames ++
 }
@@ -332,6 +334,7 @@ function gameOver(){
     document.getElementById("score-gained").innerHTML = " You got: " + score + " score"
 }
 function startGameAgain(){
+    /*
     player.opacity = 1
     score = 0
     game.over = false
@@ -339,6 +342,8 @@ function startGameAgain(){
     animate()
     document.getElementById("winsection").style.display = "none"
     document.getElementById("section").style.display = "block"
+    */
+    location.reload()
 }
 
 function enemyShoots(){
@@ -353,7 +358,7 @@ function enemyShoots(){
         if(enemyBullet.position.y + enemyBullet.height >= player.position.y &&
             enemyBullet.position.x + enemyBullet.width >= player.position.x &&
             enemyBullet.position.x <= player.position.x + player.width){
-                console.log('GameOver')
+                //console.log('GameOver')
                 setTimeout(()=>{
                     enemyBullets.splice(index, 1)
                     player.opacity = 0
@@ -385,28 +390,28 @@ function animate(){
 startGameBtn.addEventListener('click', function(){
     animate()
     startGameBtn.style.display = 'none'
-    console.log('Game Started')
+    //console.log('Game Started')
 })
 
 
 
 
 // key down switches 
-addEventListener('keypress', ({key}) =>{
+addEventListener('keydown', ({key}) =>{
     if(game.over) return
-    console.log(key)
+    //console.log(key)
     switch (key) {
         case 'x':
-            console.log('left')
+            //console.log('left')
             keys.x.pressed = true
             break;
         case 'y':
-            console.log('right')
+            //console.log('right')
             keys.y.pressed = true
             break;
         case ' ':
-            
-            console.log('space')
+            /*
+            //console.log('space')
             bullets.push(new Bullet({
                 position: {
                     x: player.position.x + player.width / 2,
@@ -417,10 +422,30 @@ addEventListener('keypress', ({key}) =>{
                     y: -10
                 }
                 }))
-            console.log(bullets)
-            break;
+                keys.space.pressed = false
+            //console.log(bullets)
+                break;
+                */
+
     }
 })
+document.body.onkeyup = function(e) {
+    if (e.key == " " ||
+        e.code == "Space" ||      
+        e.keyCode == 32      
+    ) {
+        bullets.push(new Bullet({
+            position: {
+                x: player.position.x + player.width / 2,
+                y: player.position.y
+            },
+            speed: {
+                x: 0,
+                y: -10
+            }
+            }))
+    }
+  }
 // key up switches
 addEventListener("keyup",({key})=>{
     switch(key){
@@ -428,7 +453,6 @@ addEventListener("keyup",({key})=>{
         break
         case "y": keys.y.pressed = false
         break
-        case " ": keys.space.pressed = false
-        break
+
     }
 })
