@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <p id="space-invaders" class="space-invaders">Space Invaders</p>
     <div id="section">
         <p id="score">
             <span>Score:</span>
@@ -20,7 +21,7 @@
 
     <div id="winsection" style="display: none;">
         <h1>Game Over!</h1>
-        <p>Play again?</p>
+        <p>Play again? <span id="score-gained"></span></p>
         <button class="start2" id="start2" onclick="startGameAgain()">Play again</button>
     </div>
 </body>
