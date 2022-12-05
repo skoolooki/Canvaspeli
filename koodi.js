@@ -329,10 +329,10 @@ function spawnEnemys(){
 function gameOver(){
     document.getElementById("section").style.display = "none"
     document.getElementById("winsection").style.display = "block"
+    document.getElementById("score-gained").innerHTML = " You got: " + score + " score"
 }
 function startGameAgain(){
     player.opacity = 1
-    console.log("works")
     score = 0
     game.over = false
     game.active = true
