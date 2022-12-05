@@ -243,6 +243,7 @@ function win(){
             setTimeout(()=>{
                 game.over = true
                 console.log('You Win')
+                gameOver()
             },0)
             setTimeout(()=>{
                 game.active = false
@@ -325,6 +326,21 @@ function spawnEnemys(){
     frames ++
 }
 
+function gameOver(){
+    document.getElementById("section").style.display = "none"
+    document.getElementById("winsection").style.display = "block"
+}
+function startGameAgain(){
+    player.opacity = 1
+    console.log("works")
+    score = 0
+    game.over = false
+    game.active = true
+    animate()
+    document.getElementById("winsection").style.display = "none"
+    document.getElementById("section").style.display = "block"
+}
+
 function enemyShoots(){
     enemyBullets.forEach((enemyBullet, index)=>{
         if(enemyBullet.position.y + enemyBullet.height >= canvas.height){
@@ -346,6 +362,7 @@ function enemyShoots(){
                 setTimeout(()=>{
                     game.active = false
                 },100)
+                gameOver()
             }
     })
 }
@@ -374,9 +391,8 @@ startGameBtn.addEventListener('click', function(){
 
 
 
-
 // key down switches 
-addEventListener('keydown', ({key}) =>{
+addEventListener('keypress', ({key}) =>{
     if(game.over) return
     console.log(key)
     switch (key) {
@@ -389,6 +405,7 @@ addEventListener('keydown', ({key}) =>{
             keys.y.pressed = true
             break;
         case ' ':
+            
             console.log('space')
             bullets.push(new Bullet({
                 position: {

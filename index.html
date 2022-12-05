@@ -13,9 +13,15 @@
             <span>Score:</span>
             <span id="number">0</span>
         </p>
-        <button id="start">Start Game</button>
+        <button id="start" class="start">Start Game</button>
         
         <canvas id="canvas" width="600" height="600"></canvas>
+    </div>
+
+    <div id="winsection" style="display: none;">
+        <h1>Game Over!</h1>
+        <p>Play again?</p>
+        <button class="start2" id="start2" onclick="startGameAgain()">Play again</button>
     </div>
 </body>
 <script src="koodi.js"></script>
