@@ -397,7 +397,7 @@ startGameBtn.addEventListener('click', function(){
 
 
 // key down switches 
-addEventListener('keypress', ({key}) =>{
+addEventListener('keydown', ({key}) =>{
     if(game.over) return
     //console.log(key)
     switch (key) {
@@ -410,7 +410,7 @@ addEventListener('keypress', ({key}) =>{
             keys.y.pressed = true
             break;
         case ' ':
-            
+            /*
             //console.log('space')
             bullets.push(new Bullet({
                 position: {
@@ -422,10 +422,30 @@ addEventListener('keypress', ({key}) =>{
                     y: -10
                 }
                 }))
+                keys.space.pressed = false
             //console.log(bullets)
-            break;
+                break;
+                */
+
     }
 })
+document.body.onkeyup = function(e) {
+    if (e.key == " " ||
+        e.code == "Space" ||      
+        e.keyCode == 32      
+    ) {
+        bullets.push(new Bullet({
+            position: {
+                x: player.position.x + player.width / 2,
+                y: player.position.y
+            },
+            speed: {
+                x: 0,
+                y: -10
+            }
+            }))
+    }
+  }
 // key up switches
 addEventListener("keyup",({key})=>{
     switch(key){
@@ -433,7 +453,6 @@ addEventListener("keyup",({key})=>{
         break
         case "y": keys.y.pressed = false
         break
-        case " ": keys.space.pressed = false
-        break
+
     }
 })
